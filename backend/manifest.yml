@@ -1,0 +1,91 @@
+name: ChefPortfolio
+
+entities:
+  Chef:
+    authenticable: true
+    properties:
+      - name
+      - name: email
+        type: email
+      - name: specialty
+        type: string
+        helpText: 'e.g., Pastry, Italian Cuisine, etc.'
+      - name: role
+        type: choice
+        options:
+          values: [admin, chef]
+        default: chef
+    policies:
+      create:
+        - access: admin
+      read:
+        - access: restricted
+          allow: Chef
+          condition: self
+      update:
+        - access: restricted
+          allow: Chef
+          condition: self
+      delete:
+        - access: admin
+      signup:
+        - access: public
+
+  Recipe:
+    properties:
+      - name: title
+        type: string
+      - name: description
+        type: richText
+      - name: ingredients
+        type: text
+        helpText: 'List each ingredient on a new line.'
+      - name: instructions
+        type: text
+        helpText: 'List each step on a new line.'
+      - name: prepTime
+        type: number
+        helpText: 'Preparation time in minutes.'
+      - name: cookTime
+        type: number
+        helpText: 'Cooking time in minutes.'
+      - name: difficulty
+        type: choice
+        options:
+          values: [Easy, Medium, Hard]
+        default: Medium
+      - name: photo
+        type: image
+        options:
+          sizes:
+            thumbnail:
+              width: 400
+              height: 300
+            large:
+              width: 1024
+              height: 768
+    belongsTo:
+      - name: author
+        entity: Chef
+    policies:
+      create:
+        - access: restricted
+          allow: Chef
+      read:
+        - access: public
+      update:
+        - access: restricted
+          allow: Chef
+          condition: self
+      delete:
+        - access: restricted
+          allow: Chef
+          condition: self
+
+# Health check endpoint for connection testing
+endpoints:
+  health:
+    path: /api/health
+    method: GET
+    policies: []
+    handler: healthCheck
